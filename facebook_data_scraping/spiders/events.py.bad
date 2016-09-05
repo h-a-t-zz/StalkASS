@@ -1,0 +1,100 @@
+# -*- coding: utf-8 -*-
+import scrapy
+import re
+import json
+import urlparse
+import base64
+
+from bs4 import BeautifulSoup
+from scrapy.shell import inspect_response
+from scrapy.http import FormRequest
+
+from scrapy_splash import SplashFormRequest
+from scrapy_splash import SplashRequest
+
+from facebook_data_scraping.items import FacebookPhoto
+
+
+class EventCrawlerSpider(scrapy.Spider):
+    # ARGS
+    target_username = ""
+    email = ""
+    password = ""
+
+    # VARS
+    name = "events_crawler"
+    allowed_domains = ['facebook.com']
+    start_urls = ['https://www.facebook.com/hicham.toli', 'https://www.facebook.com/zuck']
+    top_url = 'https://www.facebook.com'
+
+    def __init__(self, *args, **kwargs):
+      super(EventCrawlerSpider, self).__init__(*args, **kwargs)
+      self.email = kwargs.get('email')
+      self.password = kwargs.get('password')
+      self.target_username = kwargs.get('target_username')
+
+    def parse(self, response):
+        return [FormRequest("https://m.facebook.com/login.php",
+            formdata={
+                'email': self.email,
+                'pass': self.password
+            }, callback=self.parse_post_login)
+        ]
+
+    def parse_post_login(self, response):
+        return scrapy.Request("{0}/{1}".format(self.top_url, self.target_username),
+                callback=self.parse_entity_id)
+
+    def parse_entity_id(self, response):
+
+        def extract_entity_id(s):
+            p = re.compile(ur'"entity_id":"(\d*)"')
+            search = re.search(p, s)
+            return search.group(1)
+
+        self.entity_id = extract_entity_id(response.body)
+
+        ajax_events_url = "{0}/search/{1}/events".format(
+            self.top_url, self.entity_id
+        )
+        return scrapy.Request(ajax_events_url, callback=self.parse_entrypoint)
+
+def parse_entrypoint(self, response):
+  def extract_photo_pages(html_str):
+    p = re.compile(ur'href="(/photo\.php.*?)">')
+    m = re.findall(p, html_str)
+    photo_page_urls = []
+    for encoded_url in m:
+        photo_page_urls.append("{0}{1}".format(self.top_url, BeautifulSoup(encoded_url, 'html.parser').get_text()))
+    return photo_page_urls
+
+# need to throw exception if can't find next_cursor (END condition)
+  def extract_next_cursor(html_str):
+    p = re.compile(ur'cursor=(\d*)&')
+    search = re.search(p, html_str)
+    return search.group(1)
+
+  def last_photo_query(url, next_cursor):
+    parsed = urlparse.urlparse(url)
+    cursor = urlparse.parse_qs(parsed.query)['cursor']
+    return cursor == next_cursor
+
+
+  if response.body.startswith("for (;;);"):
+    json_obj = json.loads(response.body[9:]) #remove prefix "for (;;);""
+  else:
+    json_obj = json.loads(response.body)
+
+  photo_urls = extract_photo_pages(json_obj['payload']['actions'][0]['html'])
+  next_cursor = extract_next_cursor(json_obj['payload']['actions'][2]['code'])
+
+  for photo_url in photo_urls:
+    full_url = yield scrapy.Request(photo_url, callback=self.parse_photo)
+
+  if response.url.find("cursor") >-1 and last_photo_query(response.url, next_cursor):
+    yield
+  else:
+    ajax_photos_url = "https://m.facebook.com/{0}?v=photos&editdata=%7B%7D&cursor={1}&psm=default&album=t.{2}&__ajax__=&__user={3}".format(
+        self.target_username, next_cursor, self.album_id, self.user_id
+    )
+    yield scrapy.Request(ajax_photos_url, callback=self.parse_photos)

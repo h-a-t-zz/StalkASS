@@ -1,0 +1,40 @@
+#Request :
+#{u'browse_location': u'',
+# u'callsite': u'browse_ui:init_result_set',
+# u'cursor': u'AboQ0RWuOB55FexZH4jnxWQX6mV0w3q2i1E71XpwOhu6sh5R1rPUSdiI7Ujul-eP5msJA8Z7PGRv8MTDo9yBba_t67nK8mDMNhYnT2mICvWMDsTd8JNzFSG7xw9SQy
+#bI312r35EXs4DyrDeGc46P2-MA4-3be-3ZMN5LP3iGyUi2x0xRQh75F6kGsOX30qRZ0rylFmWW2icZfVL-t5pL_ft5h-6sZ8VnnuUXj2ApB7f1m1wvTzXzQ0TePNAWHRaj2jjXFcdrOw
+#eLt9bQhitSCxMWAMfh-YmOO8vjLMYo-Qo7Xw',
+# u'display_params': [],
+# u'em': False,
+# u'encoded_query': u'{"bqf":"events(4)","vertical":"none","post_search_vertical":null,"intent_data":null,"filters":[],"has_chrono_sort":fals
+#e,"query_analysis":null,"subrequest_disabled":false}',
+# u'encoded_title': u'W3sidGV4dCI6Ik1hcmsrWnVja2VyYmVyZ1x1MDAyNTI3cyIsInVpZCI6NCwidHlwZSI6InVzZXIifSwiK2V2ZW50cyJd',
+# u'exclude_ids': None,
+# u'experience_type': u'grammar',
+# u'filter_ids': {u'10152703099895303': u'10152703099895303',
+#  u'10152738762846697': u'10152738762846697',
+#  u'10153266870501661': u'10153266870501661',
+#  u'10153856595884899': u'10153856595884899',
+#  u'810205749053712': 810205749053712,
+# u'851494754920930': 851494754920930},
+# u'has_top_pagelet': True,
+#u'impression_id': u'b3303e2c',
+# u'is_trending': False,
+# u'logger_source': u'www_main',
+# u'mr': False,
+# u'page_number': 2,
+# u'place_id': None,
+# u'reaction_session_id': None,
+# u'reaction_surface': None,
+# u'ref': u'unknown',
+# u'ref_path': u'/search/4/events',
+# u'story_id': None,
+# u'tl_log': False,
+# u'topic_id': None,
+# u'tr': None,
+# u'trending_source': None,
+# u'typeahead_sid': u'',
+# u'view': u'list'}
+
+
+# Response:

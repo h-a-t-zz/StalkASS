@@ -1,0 +1,75 @@
+Desactive les images
+function main(splash)
+    splash.images_enabled = false
+    assert(splash:go(splash.args.url))
+    return {png=splash:png()}
+end
+
+scroll:
+function main(splash)
+    splash:go(splash.args.url)
+    local scroll_to = splash:jsfunc("window.scrollTo")
+    scroll_to(0, 300)
+    return {png=splash:png()}
+end
+
+
+log des requetes:
+
+treat = require("treat")
+function main(splash)
+    local urls = {}
+    splash:on_request(function(request)
+        table.insert(urls, request.url)
+    end)
+    assert(splash:go(splash.args.url))
+    return treat.as_array(urls)
+end
+
+plusieurs pages:
+treat = require("treat")
+
+-- Given an url, this function returns a table
+-- with the page screenshoot, it's HTML contents
+-- and it's title.
+function page_info(splash, url)
+    local ok, msg = splash:go(url)
+    if not ok then
+        return {ok=false, reason=msg}
+    end
+    local res = {
+        html=splash:html(),
+        title=splash:evaljs('document.title'),
+        image=splash:png(),
+        ok=true,
+    }
+    return res
+end
+
+-- visit first 3 pages of hacker news
+local base = "https://news.ycombinator.com/news?p="
+function main(splash)
+    local result = treat.as_array({})
+    for i=1,3 do
+        local url =  base .. i
+        result[i] = page_info(splash, url)
+    end
+    return result
+end
+
+
+Compter:
+function main(splash)
+  local get_div_count = splash:jsfunc([[
+    function () {
+      var body = document.body;
+      var divs = body.getElementsByTagName('div');
+      return divs.length;
+    }
+  ]])
+
+  local url = splash.args.url
+  splash:go(url)
+  return string.format("There are %s DIVs in %s",
+      get_div_count(), url)
+end
