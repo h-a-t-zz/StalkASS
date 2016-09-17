@@ -237,10 +237,10 @@ end        """
                         jiji = json.loads(googleResponse.read())
                         if (str(jiji['status'])=="OK"):
                             event['properties']['googleApi'] = jiji
-                            event['geometry']['coordinates'].append(jiji['results'][0]['geometry']['location']['lat'])
                             event['geometry']['coordinates'].append(jiji['results'][0]['geometry']['location']['lng'])
+                            event['geometry']['coordinates'].append(jiji['results'][0]['geometry']['location']['lat'])
                         else:
-                            event['geometry']['coordinates']=""
+                            event['geometry']['coordinates']=[0,0]
                     self.geojson['features'].append(event)
                     f = codecs.open(filename+self.target_username+".geojson", "w", encoding='utf8')
                     f.write(json.dumps(self.geojson, indent=4))

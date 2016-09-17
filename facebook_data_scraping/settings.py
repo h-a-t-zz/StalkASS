@@ -29,7 +29,7 @@ AUTOTHROTTLE_DEBUG = True
 
 URLLENGTH_LIMIT = 13337
 
-SPLASH_URL = 'http://localhost:32775'
+SPLASH_URL = 'http://localhost:32772'
 
 SPIDER_MIDDLEWARES = {
     'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,

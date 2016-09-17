@@ -1,6 +1,1 @@
-*.DS_Store
-*.pyc
-~$*.*
-*.jpg
-*.png
-run.sh
+out/*
